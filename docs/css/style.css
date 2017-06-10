@@ -1,0 +1,40 @@
+body {
+    background: url(../images/Background_Empty.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    overflow-y: hidden;
+    padding: 0;
+    margin: 0;
+    width: 700px;
+    height: 100%;
+}
+
+.filledpart {
+  position:absolute;
+  background-color:green;
+  width:125px;
+  height:100px;
+  border:1px solid yellow;
+  
+}
+
+.brokenpart {
+  position:absolute;
+  background-color:red;
+  width:125px;
+  height:100px;
+  border:1px solid yellow;
+  
+}
+
+character {
+  background-image: url('../images/player.png');
+  width: 61px; height: 102px;
+  display: block;
+}
+
+
+
+

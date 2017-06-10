@@ -1,1 +1,3 @@
-# Programeren_game
+# Grid
+
+Generating a clickable grid of DOM elements.
