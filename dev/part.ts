@@ -3,8 +3,10 @@ class Part {
     private column:number;
     private row:number;
     public allowed:number;
-    private x:number;
-    private y:number;
+    public x:number;
+    public y:number;
+    public width:number;
+    public height:number;
 
     constructor(row:number, column:number){
       this.row = row;
@@ -15,7 +17,7 @@ class Part {
 
       if(this.row%2 == 0){
           this.allowed = 1;
-      } else{
+      } else {
         this.allowed = Math.round(Math.random());
       }
       
@@ -33,5 +35,6 @@ class Part {
 
     public partClicked(){
       console.log("row: " + this.row + " column: " + this.column);
+      console.log(this.allowed);
     }
 }

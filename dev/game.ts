@@ -5,7 +5,8 @@ class Game {
     public div:HTMLElement;
     private passable: boolean;
 
-    objects:Array<GameObject>;
+    private objects:Array<GameObject>;
+    private parts:Array<Part>;
     private character:Character;
 
     constructor(){

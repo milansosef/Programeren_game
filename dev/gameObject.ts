@@ -1,11 +1,12 @@
 class GameObject {
 
-    public div:HTMLElement;
+    protected div:HTMLElement;
     public x:number;
     public y:number;
     public width:number;
     public height:number;
-            
+    protected rect: ClientRect;
+
     constructor(tag:string, parent:HTMLElement, x:number, y:number, width:number, height:number) {
         this.div = document.createElement(tag);
         parent.appendChild(this.div);
@@ -14,6 +15,8 @@ class GameObject {
         this.y = y;
         this.width = width;
         this.height = height;
+
+        this.rect = this.div.getBoundingClientRect();
     }
 
     public update(){

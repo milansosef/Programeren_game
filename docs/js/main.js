@@ -16,12 +16,27 @@ var GameObject = (function () {
         this.y = y;
         this.width = width;
         this.height = height;
+        this.rect = this.div.getBoundingClientRect();
     }
     GameObject.prototype.update = function () {
         this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
     };
     return GameObject;
 }());
+var bridge = (function (_super) {
+    __extends(bridge, _super);
+    function bridge() {
+        var _this = _super.call(this, "character", document.body, 400, 670, 650, 960) || this;
+        _this.setPosition();
+        return _this;
+    }
+    bridge.prototype.setPosition = function () {
+        this.x = window.innerWidth / 2 - this.rect.width / 2;
+        this.div.style.left = this.x + "px";
+        this.div.style.top = this.y + "px";
+    };
+    return bridge;
+}(GameObject));
 var Character = (function (_super) {
     __extends(Character, _super);
     function Character() {
@@ -109,7 +124,20 @@ var Part = (function () {
     }
     Part.prototype.partClicked = function () {
         console.log("row: " + this.row + " column: " + this.column);
+        console.log(this.allowed);
     };
     return Part;
 }());
+var Util = (function () {
+    function Util() {
+    }
+    Util.checkCollision = function (part, character) {
+        return (part.x < character.x + character.width &&
+            part.x + part.width > character.x &&
+            part.y < character.y + character.height &&
+            part.height + part.y > character.y);
+    };
+    return Util;
+}());
+var hit = Util.checkCollision(obj1, obj2);
 //# sourceMappingURL=main.js.map

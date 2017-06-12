@@ -11,6 +11,23 @@ body {
     height: 100%;
 }
 
+character {
+  background-image: url('../images/player.png');
+  width: 61px; 
+  height: 102px;
+  display: block;
+}
+
+bridge {
+    background-image: url(../images/Rope_Bridge_Empty.png);
+    background-size: cover;
+    width: 650px; height: 960px;
+    text-align: center;
+    padding: auto;
+    /*cursor: url(../images/Pointer.png), auto;*/
+}
+
+
 .filledpart {
   position:absolute;
   background-color:green;
@@ -28,13 +45,3 @@ body {
   border:1px solid yellow;
   
 }
-
-character {
-  background-image: url('../images/player.png');
-  width: 61px; height: 102px;
-  display: block;
-}
-
-
-
-
