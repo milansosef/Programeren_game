@@ -1,3 +1,3 @@
-# Brug game
+# Grid
 
-Walk across the bridge.
+Generating a clickable grid of DOM elements.

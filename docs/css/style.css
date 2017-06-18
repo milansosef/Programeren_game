@@ -11,11 +11,27 @@ body {
     height: 100%;
 }
 
+body * {
+    position: absolute;
+    display: block;
+}
+
+button {
+  background-image: url('../images/startbutton.png');
+  width: 345px;
+  height: 131px;
+}
+
 character {
   background-image: url('../images/player.png');
   width: 61px; 
   height: 102px;
-  display: block;
+  z-index: 2;
+}
+
+car {
+	width:168px; min-height:108px;
+	background-image: url('../images/car.png');
 }
 
 bridge {
@@ -24,24 +40,23 @@ bridge {
     width: 650px; height: 960px;
     text-align: center;
     padding: auto;
+    z-index: 1;
     /*cursor: url(../images/Pointer.png), auto;*/
 }
 
 
-.filledpart {
-  position:absolute;
+filledpart {
   background-color:green;
   width:125px;
   height:100px;
   border:1px solid yellow;
-  
+  z-index: 1;
 }
 
-.brokenpart {
-  position:absolute;
+brokenpart {
   background-color:red;
   width:125px;
   height:100px;
   border:1px solid yellow;
-  
+  z-index: 1;
 }

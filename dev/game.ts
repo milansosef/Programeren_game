@@ -1,44 +1,25 @@
-/// <reference path="gameObject.ts"/>
-/// <reference path="character.ts"/>
+/// <reference path="views/start.ts"/>
+/// <reference path="views/level.ts"/>
 
 class Game {
-    public div:HTMLElement;
-    private passable: boolean;
-
-    private objects:Array<GameObject>;
-    private parts:Array<Part>;
-    private character:Character;
+    private view:View;
+    public container:HTMLElement;
 
     constructor(){
-        this.createParts();
-        this.objects = new Array<GameObject>();
-        this.character = new Character();
-
-        requestAnimationFrame(() => this.gameLoop());
+        this.container = document.createElement("container");
+        document.body.appendChild(this.container);
+        
+        // TODO hier gaan we een new Level doorgeven aan showView !
+        let start = new Start(this); 
+        this.showView(start);
     }
 
-    createParts(){
-        for(let row = 0; row<6; row++){
-            this.passable = false;
-
-            while(this.passable == false){
-                for (let column = 0; column < 4; column++) {
-                    let p = new Part(row, column);
-                    if (p.allowed == 1){
-                         this.passable = true;
-                    }
-                }
-            }
-        }
-    }
-
-    gameLoop(){
-        this.character.update();
-
-        for(let o of this.objects){
-            o.update();
-        }
-        requestAnimationFrame(() => this.gameLoop());
+    public showView(v:View):void {
+        this.view = v;
     }
 }
+
+window.addEventListener("load", function() {
+    new Game();
+});
 
