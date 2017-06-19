@@ -23,4 +23,5 @@ Level heeft bridge, bridge heeft part
 
 Inheritance
 
-![klassendiagram-1](https://user-images.githubusercontent.com/22589141/27279446-ec6a1fda-54e4-11e7-9a5c-c22ed2d12303.jpg)
+![klassendiagram-1](https://user-images.githubusercontent.com/22589141/27306626-96ed3e7c-5546-11e7-954b-335a651aa7fd.jpg)
+
