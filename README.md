@@ -15,4 +15,4 @@ Level heeft bridge, bridge heeft part
 
 Inheritance 
 
-[Klassendiagram.pdf](https://github.com/milansosef/Programeren_game/files/1084495/Klassendiagram.pdf)
+![klassendiagram-1](https://user-images.githubusercontent.com/22589141/27279446-ec6a1fda-54e4-11e7-9a5c-c22ed2d12303.jpg)
