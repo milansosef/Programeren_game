@@ -14,3 +14,5 @@ Composition
 Level heeft bridge, bridge heeft part
 
 Inheritance 
+
+[Klassendiagram.pdf](https://github.com/milansosef/Programeren_game/files/1084495/Klassendiagram.pdf)
