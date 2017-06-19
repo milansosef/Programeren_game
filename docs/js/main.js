@@ -24,7 +24,7 @@ var GameObject = (function () {
     return GameObject;
 }());
 var Part = (function () {
-    function Part(b, p, offset, row, column) {
+    function Part(b, p, offset, row, column, allowed) {
         this.bridge = b;
         this.parent = p;
         this.row = row;
@@ -33,15 +33,13 @@ var Part = (function () {
         this.height = 100;
         this.x = (column * 125) + offset + 77;
         this.y = row * 100;
+        this.allowed = allowed;
         this.createDiv();
         this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
     }
     Part.prototype.createDiv = function () {
         if (this.row % 2 == 0) {
-            this.allowed = 1;
-        }
-        else {
-            this.allowed = Math.round(Math.random());
+            this.allowed = true;
         }
         if (this.allowed) {
             this.div = document.createElement("filledpart");
@@ -71,70 +69,52 @@ var Bridge = (function (_super) {
         this.parts = new Array();
         this.collidingparts = new Array();
         for (var row = 0; row < 7; row++) {
-            this.passable = false;
-            while (this.passable == false) {
-                for (var column = 0; column < 4; column++) {
-                    var p = new Part(this, this.parent, this.x, row, column);
-                    this.parts.push(p);
-                    if (p.allowed == 1) {
-                        this.passable = true;
-                    }
-                    if (p.allowed == 0) {
-                        this.collidingparts.push(p);
-                    }
+            var currentPassables = [];
+            for (var column = 0; column < 4; column++) {
+                var state = Boolean((Math.floor(Math.random() * 100)) % 2 == 0);
+                currentPassables.push(state);
+                if (column == 3 && currentPassables.indexOf(true) == -1) {
+                    state = true;
+                }
+                var p = new Part(this, this.parent, this.x, row, column, state);
+                this.parts.push(p);
+                if (p.allowed == false) {
+                    this.collidingparts.push(p);
                 }
             }
         }
+    };
+    Bridge.prototype.refreshParts = function () {
+        for (var i = 0; i < this.parts.length; i++) {
+            var p = this.parts[i];
+            this.removePart(p);
+        }
+        this.parts = [];
+        for (var i = 0; i < this.collidingparts.length; i++) {
+            var p = this.collidingparts[i];
+            this.removePart(p);
+        }
+        this.collidingparts = [];
+        this.createParts();
     };
     Bridge.prototype.removePart = function (p) {
         p.div.remove();
     };
     return Bridge;
 }(GameObject));
-var Car = (function () {
-    function Car(g) {
-        this.speed = 0;
-        this.div = document.createElement("car");
-        document.body.appendChild(this.div);
-        this.game = g;
-        this.x = -168;
-        this.y = Math.ceil(Math.random() * 5) * 110;
-        this.width = 168;
-        this.height = 108;
-        this.speed = Math.random() * 2 + 2;
-        this.setColor();
-        this.update();
-    }
-    Car.prototype.update = function () {
-        this.x += this.speed;
-        if (this.x > window.innerWidth) {
-            console.log("Auto uit beeld: " + this.x);
-        }
-        this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
-    };
-    Car.prototype.setColor = function () {
-        var color = Math.random() * 360;
-        this.div.style.webkitFilter = "hue-rotate(" + color + "deg)";
-        this.div.style.filter = "hue-rotate(" + color + "deg)";
-    };
-    return Car;
-}());
 var Character = (function (_super) {
     __extends(Character, _super);
     function Character(l, parent) {
         var _this = _super.call(this, "character", parent, 400, 670, 61, 102) || this;
         _this.level = l;
-        _this.x = window.innerWidth / 2 - 61 / 2 + 125 / 2;
-        _this.y = window.innerHeight - 102 + 35;
-        console.log(_this.x);
-        console.log("ik ben " + _this.width);
+        _this.setPosition();
         _this.callback = function (e) { return _this.onKeyDown(e); };
         window.addEventListener("keydown", _this.callback);
         return _this;
     }
-    Character.prototype.removeMe = function () {
-        this.div.remove();
-        window.removeEventListener("keydown", this.callback);
+    Character.prototype.setPosition = function () {
+        this.x = window.innerWidth / 2 - 61 / 2 + 125 / 2;
+        this.y = window.innerHeight - 102 + 35;
     };
     Character.prototype.onKeyDown = function (event) {
         switch (event.keyCode) {
@@ -152,16 +132,19 @@ var Character = (function (_super) {
                 this.y -= 100;
                 if (this.y < -50) {
                     this.y = 670;
-                    this.level.scoreCount();
+                    this.level.bridgeCrossed();
                 }
                 break;
             case 83:
                 this.y += 100;
+                if (this.y > 670)
+                    this.y = 670;
                 break;
         }
     };
-    Character.prototype.update = function () {
-        this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
+    Character.prototype.removeMe = function () {
+        this.div.remove();
+        window.removeEventListener("keydown", this.callback);
     };
     return Character;
 }(GameObject));
@@ -174,8 +157,8 @@ var Start = (function () {
         var _this = this;
         this.button = document.createElement("button");
         document.body.appendChild(this.button);
-        TweenLite.set(this.button, { x: 550, y: -230 });
-        TweenLite.to(this.button, 1, { y: 300, ease: Bounce.easeOut });
+        TweenLite.set(this.button, { x: window.innerWidth / 2 - 345 / 2, y: -230 });
+        TweenLite.to(this.button, 1, { y: window.innerHeight / 2 - 131 / 2, ease: Bounce.easeOut });
         this.button.addEventListener("click", function (e) { return _this.startGame(e); });
     };
     Start.prototype.startGame = function (e) {
@@ -188,20 +171,27 @@ var Start = (function () {
 var Level = (function () {
     function Level(g) {
         var _this = this;
-        this.cars = new Array();
+        this.wind = new Array();
         this.game = g;
-        this.score = 0;
         this.createLevel();
-        setInterval(function () { return _this.createCar(); }, 1400);
+        this.score = new Score();
+        this.bridge = new Bridge(this.div);
+        this.character = new Character(this, this.div);
+        this.intervalID = setInterval(function () { return _this.createWind(); }, 1400);
         requestAnimationFrame(function () { return _this.gameLoop(); });
     }
-    Level.prototype.createCar = function () {
-    };
     Level.prototype.createLevel = function () {
         this.div = document.createElement("level");
         this.game.container.appendChild(this.div);
-        this.bridge = new Bridge(this.div);
-        this.character = new Character(this, this.div);
+    };
+    Level.prototype.createWind = function () {
+        this.wind.push(new Wind(this, this.div));
+    };
+    Level.prototype.removeWind = function (w) {
+        var i = this.wind.indexOf(w);
+        if (i != -1) {
+            this.wind.splice(i, 1);
+        }
     };
     Level.prototype.gameLoop = function () {
         var _this = this;
@@ -209,16 +199,12 @@ var Level = (function () {
         for (var _i = 0, _a = this.bridge.collidingparts; _i < _a.length; _i++) {
             var p = _a[_i];
             if (Util.checkCollision(p, this.character)) {
-                p.div.style.opacity = 0.2.toString();
                 collision = true;
-            }
-            else {
-                p.div.style.opacity = 1 + "";
             }
         }
         this.character.update();
         this.bridge.update();
-        for (var _b = 0, _c = this.cars; _b < _c.length; _b++) {
+        for (var _b = 0, _c = this.wind; _b < _c.length; _b++) {
             var c = _c[_b];
             c.update();
         }
@@ -230,22 +216,64 @@ var Level = (function () {
         }
     };
     Level.prototype.gameOver = function () {
+        clearInterval(this.intervalID);
         this.div.remove();
         this.character.removeMe();
-        var score = new Score(this.game, this.score);
-        this.game.showView(score);
+        this.score.removeMe();
+        var level = this;
+        level = undefined;
+        this.character = undefined;
+        this.bridge = undefined;
+        this.wind = undefined;
+        var endscreen = new Endscreen(this.game, this.score);
+        this.game.showView(endscreen);
     };
-    Level.prototype.scoreCount = function () {
-        this.score++;
-        console.log("Scored! Score = " + this.score);
-        for (var i = 0; i < this.bridge.parts.length; i++) {
-            var p = this.bridge.parts[i];
-            this.bridge.removePart(p);
-        }
-        this.bridge.parts = [];
-        this.bridge.createParts();
+    Level.prototype.bridgeCrossed = function () {
+        this.score.addScore(1);
+        this.bridge.refreshParts();
     };
     return Level;
+}());
+var Endscreen = (function () {
+    function Endscreen(g, s) {
+        this.game = g;
+        this.score = s;
+        this.createGameOver();
+        this.createScore();
+        this.createButton();
+    }
+    Endscreen.prototype.createGameOver = function () {
+        this.gameOver = document.createElement("score");
+        this.gameOver.innerHTML = "GAME OVER";
+        document.body.appendChild(this.gameOver);
+        var gameOverX = window.innerWidth / 2 - 150;
+        var gameOverY = window.innerHeight / 2 - 100;
+        this.gameOver.style.transform = "translate(" + gameOverX + "px, " + gameOverY + "px)";
+    };
+    Endscreen.prototype.createScore = function () {
+        this.scoreDiv = document.createElement("score");
+        this.scoreDiv.innerHTML = "Your score: " + this.score.getScore();
+        document.body.appendChild(this.scoreDiv);
+        var scoreDivX = window.innerWidth / 2 - 150;
+        var scoreDivY = window.innerHeight / 2;
+        this.scoreDiv.style.transform = "translate(" + scoreDivX + "px, " + scoreDivY + "px)";
+    };
+    Endscreen.prototype.createButton = function () {
+        var _this = this;
+        this.button = document.createElement("button");
+        document.body.appendChild(this.button);
+        TweenLite.set(this.button, { x: window.innerWidth / 2 - 345 / 2, y: -230 });
+        TweenLite.to(this.button, 1, { y: window.innerHeight / 2 + 131 / 2, ease: Bounce.easeOut });
+        this.button.addEventListener("click", function (e) { return _this.startGame(e); });
+    };
+    Endscreen.prototype.startGame = function (e) {
+        this.button.remove();
+        this.gameOver.remove();
+        this.scoreDiv.remove();
+        var level = new Level(this.game);
+        this.game.showView(level);
+    };
+    return Endscreen;
 }());
 var Game = (function () {
     function Game() {
@@ -262,6 +290,29 @@ var Game = (function () {
 window.addEventListener("load", function () {
     new Game();
 });
+var Score = (function () {
+    function Score() {
+        this.scoreCount = 0;
+        this.createDiv();
+    }
+    Score.prototype.addScore = function (n) {
+        this.scoreCount = this.scoreCount + n;
+        this.div.innerHTML = "SCORE: " + this.scoreCount;
+    };
+    Score.prototype.getScore = function () {
+        return this.scoreCount;
+    };
+    Score.prototype.createDiv = function () {
+        this.div = document.createElement("score");
+        this.div.innerHTML = "SCORE: " + this.scoreCount;
+        document.body.appendChild(this.div);
+        this.div.style.transform = "translate(" + 20 + "px, " + 20 + "px)";
+    };
+    Score.prototype.removeMe = function () {
+        this.div.remove();
+    };
+    return Score;
+}());
 var Util = (function () {
     function Util() {
     }
@@ -273,29 +324,28 @@ var Util = (function () {
     };
     return Util;
 }());
-var Score = (function () {
-    function Score(g, s) {
-        this.game = g;
-        this.score = s;
-        this.createButton();
-        console.log("Game over newb");
-        console.log("Score: " + this.score);
-        this.div = document.createElement("start");
-        g.container.appendChild(this.div);
+var Wind = (function (_super) {
+    __extends(Wind, _super);
+    function Wind(l, parent) {
+        var _this = _super.call(this, "wind", parent, -168, Math.ceil(Math.random() * 5) * 110, 168, 108) || this;
+        _this.speed = 0;
+        _this.level = l;
+        _this.y = Math.ceil(Math.random() * 5) * 110;
+        _this.speed = Math.random() * 2 + 2;
+        _this.update();
+        return _this;
     }
-    Score.prototype.createButton = function () {
-        var _this = this;
-        this.button = document.createElement("button");
-        document.body.appendChild(this.button);
-        TweenLite.set(this.button, { x: 550, y: -230 });
-        TweenLite.to(this.button, 1, { y: 300, ease: Bounce.easeOut });
-        this.button.addEventListener("click", function (e) { return _this.startGame(e); });
+    Wind.prototype.update = function () {
+        this.x += this.speed;
+        if (this.x > window.innerWidth - 50) {
+            this.removeMe();
+        }
+        this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
     };
-    Score.prototype.startGame = function (e) {
-        this.button.remove();
-        var level = new Level(this.game);
-        this.game.showView(level);
+    Wind.prototype.removeMe = function () {
+        this.div.remove();
+        this.level.removeWind(this);
     };
-    return Score;
-}());
+    return Wind;
+}(GameObject));
 //# sourceMappingURL=main.js.map

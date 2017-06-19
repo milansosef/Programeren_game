@@ -1,5 +1,6 @@
 /// <reference path="views/start.ts"/>
 /// <reference path="views/level.ts"/>
+/// <reference path="views/endscreen.ts"/>
 
 class Game {
     private view:View;
@@ -9,7 +10,6 @@ class Game {
         this.container = document.createElement("container");
         document.body.appendChild(this.container);
         
-        // TODO hier gaan we een new Level doorgeven aan showView !
         let start = new Start(this); 
         this.showView(start);
     }

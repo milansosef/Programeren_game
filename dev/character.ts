@@ -9,22 +9,18 @@ class Character extends GameObject {
         super("character", parent, 400, 670, 61, 102);
 
         this.level = l;
-        this.x = window.innerWidth / 2 - 61/2 + 125/2;
-        this.y = window.innerHeight - 102 + 35;
-        console.log(this.x);
+        this.setPosition();
 
-        console.log("ik ben " + this.width);
-     
         this.callback = (e:KeyboardEvent) => this.onKeyDown(e);
         window.addEventListener("keydown", this.callback);
     }
 
-    public removeMe():void {
-        this.div.remove();
-        window.removeEventListener("keydown", this.callback);
+    setPosition(){
+        this.x = window.innerWidth / 2 - 61/2 + 125/2;
+        this.y = window.innerHeight - 102 + 35;
     }
 
-    onKeyDown(event:KeyboardEvent):void {
+    private onKeyDown(event:KeyboardEvent):void {
         switch(event.keyCode){
         case 65:
             this.x -= 125;
@@ -36,19 +32,20 @@ class Character extends GameObject {
             break;
         case 87:
             this.y -= 100;
-            // als helemaal boven in beeld, dan weer beneden zetten EN de score ophogen!!
             if(this.y < -50){
                 this.y = 670;
-                this.level.scoreCount();
+                this.level.bridgeCrossed();
             } 
             break;
         case 83:
             this.y += 100;
+            if(this.y > 670) this.y = 670; 
             break;
         }
     }
-    
-    public update() : void {
-        this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
+
+    public removeMe():void {
+        this.div.remove();
+        window.removeEventListener("keydown", this.callback);
     }
 }

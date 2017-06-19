@@ -2,13 +2,11 @@
 /// <reference path="part.ts" />
 
 class Bridge extends GameObject {
-    public collidingparts:Array<Part>;
-    public parts:Array<Part>;
-    public part:Part;
-    private passable: boolean;
     private parent: HTMLElement;
 
-    // private level: Level;
+    private parts:Array<Part>;
+    private part:Part;
+    public collidingparts:Array<Part>;  
 
     constructor(parent: HTMLElement) {
         super("bridge", parent, 0, 0, 650, 960);
@@ -22,45 +20,51 @@ class Bridge extends GameObject {
     private setPosition() {
         this.x = window.innerWidth / 2 - 325;
         this.div.style.transform ="translate("+this.x+"px, "+this.y+"px)";
-        // this.update();
     }
 
     public createParts(){
-        this.parts= new Array<Part>();
+        this.parts = new Array<Part>();
         this.collidingparts = new Array<Part>();
 
         for(let row = 0; row<7; row++){
-            this.passable = false;
+            let currentPassables = [];
 
-            while(this.passable == false){
-                for (let column = 0; column < 4; column++) {
-                    // this.parts.push(new Part(this, row, column));
-                    // this.parts.push(new Part(this, row, column, 125, 23 +(100 * row)));
-                    let p = new Part(this, this.parent, this.x, row, column);
-                    this.parts.push(p);
+            for (let column = 0; column < 4; column++) {
+                let state:boolean = Boolean((Math.floor(Math.random() * 100)) % 2 == 0);
+                currentPassables.push(state);
+                if (column == 3 && currentPassables.indexOf(true) == -1){
+                    state = true;
+                }
 
-                    if (p.allowed == 1){
-                         this.passable = true;
-                    }
-
-                    if (p.allowed == 0){
-                         this.collidingparts.push(p);
-                    }
+                let p = new Part(this, this.parent, this.x, row, column, state);
+                this.parts.push(p);
                 
+                if (p.allowed == false){
+                    this.collidingparts.push(p);
                 }
             }
         }
     }
 
-    public removePart(p: Part) {
-        // div en listeners verwijderen
-        p.div.remove();
+    public refreshParts(){
+        for(let i=0; i<this.parts.length; i++){
+            let p = this.parts[i];
+            this.removePart(p);
+        }
 
-        // ball instance verwijderen uit de array
-		// let i : number = this.collidingparts.indexOf(p);
-		// if(i != -1) {
-		// 	this.collidingparts.splice(i, 1);
-		// }
-		// console.log("Aantal is " + this.collidingparts.length);
+        this.parts = [];
+
+        for(let i=0; i<this.collidingparts.length; i++){
+            let p = this.collidingparts[i];
+            this.removePart(p);
+        }
+
+        this.collidingparts = [];
+
+        this.createParts();
+    }
+
+    public removePart(p: Part) {
+        p.div.remove();
 	}
 }

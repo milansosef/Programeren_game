@@ -3,53 +3,55 @@
 
 class Level implements View {
     public div:HTMLElement;
-    private score:number;
     private game:Game;
+    private score:Score;
 
-    private cars:Array<Car> = new Array<Car>();
+    private wind:Array<Wind> = new Array<Wind>();
+    private intervalID: number; 
     public character:Character;
     private bridge:Bridge;
 
     constructor(g:Game){
         this.game = g;
-        this.score = 0;
-
+        
         this.createLevel();
-        setInterval(()=> this.createCar(), 1400);
+        this.score = new Score();
+        this.bridge = new Bridge(this.div);
+        this.character = new Character(this, this.div);
+
+        this.intervalID = setInterval(()=> this.createWind(), 1400);
 
         requestAnimationFrame(() => this.gameLoop());
-    }
-
-    private createCar():void {
-        //this.cars.push(new Car(this));
-        // console.log("aantal autos: " + this.cars.length);
     }
 
     private createLevel(){
         this.div = document.createElement("level");
         this.game.container.appendChild(this.div);
+    }
 
-        this.bridge = new Bridge(this.div);
-        this.character = new Character(this, this.div);
+    private createWind():void {
+        this.wind.push(new Wind(this, this.div));
+    }
+
+    public removeWind(w:Wind){
+        let i:number = this.wind.indexOf(w);
+        if(i != -1) {
+            this.wind.splice(i, 1);
+        }
     }
 
     private gameLoop(){
         let collision = false;
         for(let p of this.bridge.collidingparts){
             if(Util.checkCollision(p, this.character)){
-                // console.log("Collision detected");
-                p.div.style.opacity = 0.2.toString();
                 collision = true;
-            } else {
-                // console.log("no collision");
-                p.div.style.opacity = 1 + "";
-            }
+            } 
         }
 
         this.character.update();
         this.bridge.update();
 
-        for(let c of this.cars){
+        for(let c of this.wind){
             c.update();
         }
 
@@ -61,25 +63,24 @@ class Level implements View {
     }
 
     public gameOver():void {
-        // clearInterval(this.intervalID);
-        
+        clearInterval(this.intervalID);
         this.div.remove();
         this.character.removeMe();
+        this.score.removeMe();
 
-        let score = new Score(this.game, this.score);
-        this.game.showView(score);
+        let level = this;
+        level = undefined;
+
+        this.character = undefined;
+        this.bridge = undefined;
+        this.wind = undefined;
+
+        let endscreen = new Endscreen(this.game, this.score);
+        this.game.showView(endscreen);
     }
 
-    public scoreCount(){
-        this.score++;
-        console.log("Scored! Score = " + this.score);
-
-        for(let i=0; i<this.bridge.parts.length; i++){
-            let p = this.bridge.parts[i];
-            this.bridge.removePart(p);
-        }
-
-        this.bridge.parts = [];
-        this.bridge.createParts();
+    public bridgeCrossed(){
+        this.score.addScore(1);
+        this.bridge.refreshParts();
     }
 }

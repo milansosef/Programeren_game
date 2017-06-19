@@ -11,9 +11,9 @@ class Part {
     public width:number;
     public height:number;
 
-    public allowed:number;
+    public allowed:boolean;
 
-    constructor(b:Bridge, p:HTMLElement, offset:number, row:number, column:number){
+    constructor(b:Bridge, p:HTMLElement, offset:number, row:number, column:number, allowed:boolean){
       this.bridge = b;
       this.parent = p;
       this.row = row;
@@ -22,6 +22,7 @@ class Part {
       this.height = 100;
       this.x = (column * 125) + offset + 77;
       this.y = row * 100;
+      this.allowed = allowed;
 
       this.createDiv();
 
@@ -30,9 +31,7 @@ class Part {
 
     private createDiv(){
       if(this.row%2 == 0){
-          this.allowed = 1;
-      } else {
-        this.allowed = Math.round(Math.random());
+          this.allowed = true;
       }
 
       if(this.allowed){
@@ -42,12 +41,5 @@ class Part {
         this.div = document.createElement("brokenpart");
         this.parent.appendChild(this.div);
       }
-  
-      // this.div.addEventListener("click", ()=>this.partClicked());
     }
-
-    // public partClicked(){
-    //   console.log("row: " + this.row + " column: " + this.column);
-    //   console.log(this.allowed);
-    // }
 }
