@@ -10,22 +10,22 @@ Get across the bridge as many times as you can
 
 Walk with the "WASD" keys
 
-
 The game is made with typescript and uses the folowing OOP principles:
 
 -Classes en instances
-In deze game maak ik gebruik van meerdere classes en instances om
+In deze game maak ik gebruik van meerdere classes en instances om code te structureren en scheiden. Voordelen hiervan zijn: Structuur, code samen laten werken, herbruikbaarheid van code, de complexiteit van een stuk code wordt lager. 
 
 -Encapsulation
-
-Een eigenschap afschermen noemen we “Encapsulation”
-Encapsulation voorkomt foutieve aanroepen
-Private / Public / Protected
+Variabele kun je private, public of protected maken. Hiermee kun je een eigenschap van een class/object afschermen voor andere classes waarvan het niet de bedoeling is dat ze deze eigenschappen kunnen aanpassen. In mijn game zijn er properties en methods private, protected of public, afhankelijk of een andere class bij de properties/methods van een class moeten kunnen.
 
 -Composition
-Level heeft bridge, bridge heeft part
+Composition is het gebruik maken van een object, door een verwijzing van een class naar een andere class te leggen.
+Voorbeeld uit mijn game: Class Game heeft een Level, level heeft een bridge en bridge heeft parts.
 
 -Inheritance
+Een class kan de properties en methods van een andere class overerven. In mijn game gebruik ik overerving doordat de classes bridge, character en wind de properties en methods van class GameObject overerven.
 
-![klassendiagram-1](https://user-images.githubusercontent.com/22589141/27351510-e54497ac-55fd-11e7-9683-bb86833d451f.png)
+Zie ook mijn klassendiagram
+
+![klassendiagram-1](https://user-images.githubusercontent.com/22589141/27352418-f492b6e6-5600-11e7-9dbb-b68baed79fc7.png)
 
