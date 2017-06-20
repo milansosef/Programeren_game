@@ -12,11 +12,12 @@ Walk with the "WASD" keys
 
 
 The game is made with typescript and uses the folowing OOP principles:
+
 -Classes en instances
 In deze game maak ik gebruik van meerdere classes en instances om
 
 -Encapsulation
-In deze game maak ik gebruik van
+
 Een eigenschap afschermen noemen we “Encapsulation”
 Encapsulation voorkomt foutieve aanroepen
 Private / Public / Protected
