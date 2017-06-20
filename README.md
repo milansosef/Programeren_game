@@ -2,11 +2,11 @@
 
 How to play?
 
+Link to the game: https://milansosef.github.io/Programeren_game/
+
 Press start to begin playing
 Get across the bridge as many times as you can
 Walk with the "WASD" keys
-
-Link to the game
 
 
 Classes en instances
