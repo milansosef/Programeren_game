@@ -1,8 +1,12 @@
 # Bridge game
 
-How to play?
-
 Link to the game: https://milansosef.github.io/Programeren_game/
+
+Install guide:
+
+To install the game on you're computer, you will need to clone all files to the directory you're webserver uses to host web content. Once you have done that, you can start the game by launching the index.html inside the docs folder in you're browser.   
+
+How to play?
 
 - Press start to begin playing
 
