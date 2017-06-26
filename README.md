@@ -32,6 +32,8 @@ Composition is making use of an object, while making a connection from one class
 
 A class can inherit the properties and methods from another class. In my game I use inheritance since the classes bridge, character and wind all inherit the properties and methods of the class GameObject. 
 
+Peer review classmate:
+https://github.com/Goef/FreddieFidgetPrgm4/issues/3
 
 Also, check out my class diagram (UML).
 
